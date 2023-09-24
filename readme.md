@@ -2,4 +2,4 @@ NBAbet
 ----------------------------------------------------------------------------------
 
 Resources Used:
-*  https://sportsdata.io/
+*  the-odds-api.com
