@@ -1,15 +1,19 @@
 import os
 import pdb
 import datetime
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, jsonify, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from flask_sqlalchemy import SQLAlchemy
+
 
 import requests
 from models import db, connect_db, User, Game, Ticket, Sportsbook
 from forms import LoginForm, RegisterForm
 
 app = Flask(__name__)
+if __name__ == "__main__":
+    app.run(debug=True)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
@@ -29,7 +33,8 @@ connect_db(app)
 
 CURR_USER = "curr_user"
 API_BASE_URL = "https://api.the-odds-api.com"
-KEY = "b2e010971686e624c52b4156828ae53e"
+KEY = "7928e461c07e63ecb89b830c13c88065"
+
 # DATE_FORMAT = '%b-%d '
 
 @app.before_request
@@ -51,6 +56,55 @@ def do_logout():
 
     if CURR_USER in session:
         del session[CURR_USER]
+
+def get_new_data():
+    res = requests.get(f"{API_BASE_URL}/v4/sports/basketball_nba/odds",
+                           params={'apiKey': KEY, 
+                                   'regions': 'us', 
+                                   'markets': 'h2h,spreads,totals',
+                                   'oddsFormat': 'american',
+                                   'bookmakers': 'draftkings'})
+    data = res.json()
+    # pdb.set_trace()
+    for game in data:
+        new_game = Game()
+        new_game.game_id = game['id']
+        new_game.home_team = game['home_team']
+        new_game.away_team = game['away_team']
+        new_game.home_ml_price = game['bookmakers'][0]['markets'][0]['outcomes'][0]['price']
+        new_game.away_ml_price = game['bookmakers'][0]['markets'][0]['outcomes'][1]['price']
+        new_game.home_PS = game['bookmakers'][0]['markets'][1]['outcomes'][0]['point']
+        new_game.away_PS = game['bookmakers'][0]['markets'][1]['outcomes'][1]['point']
+        new_game.home_PS_price = game['bookmakers'][0]['markets'][1]['outcomes'][0]['price']
+        new_game.away_PS_price = game['bookmakers'][0]['markets'][1]['outcomes'][1]['price']
+            
+        if 'markets' in game['bookmakers'][0] and len(game['bookmakers'][0]['markets']) > 2:
+             new_game.over_under = game['bookmakers'][0]['markets'][2]['outcomes'][0]['point']
+        else:
+            new_game.over_under = 'OFF'
+
+        if 'markets' in game['bookmakers'][0] and len(game['bookmakers'][0]['markets']) > 2:
+            new_game.over_under_price = game['bookmakers'][0]['markets'][2]['outcomes'][0]['price']
+        else:
+            new_game.over_under_price = 0
+
+        # new_game.game_date = datetime.datetime.strptime(game['commence_time'], DATE_FORMAT)
+
+        db.session.add(new_game)
+        db.session.commit()
+    all_games = Game.query.all()
+    return all_games
+
+def refresh_games():
+    table_delete = Game.games
+    table_delete.drop()
+    table_delete.create()
+    return redirect('/action')
+
+# @app.route('/get-data', methods=['GET'])
+# def get_data():
+#     data = Game.query.all()
+#     return jsonify(data=all_games)
 
 ##############################################################################
 
@@ -99,7 +153,7 @@ def logout():
     return redirect('/')
 
 ##############################################################################
-# Betting routesda
+# Betting routes
 
 @app.route('/action')
 def see_action():
@@ -109,40 +163,9 @@ def see_action():
         flash("You must login to access this feature", 'danger')
         return redirect('/')
     else:
-        res = requests.get(f"{API_BASE_URL}/v4/sports/basketball_nba/odds",
-                           params={'apiKey': KEY, 
-                                   'regions': 'us', 
-                                   'markets': 'h2h,spreads,totals',
-                                   'oddsFormat': 'american',
-                                   'bookmakers': 'draftkings'})
-        data = res.json()
-        # pdb.set_trace()
-        # for game in data:
-        #     new_game = Game()
-        #     new_game.game_id = game['id']
-        #     new_game.home_team = game['home_team']
-        #     new_game.away_team = game['away_team']
-        #     new_game.home_ml_price = game['bookmakers'][0]['markets'][0]['outcomes'][0]['price']
-        #     new_game.away_ml_price = game['bookmakers'][0]['markets'][0]['outcomes'][1]['price']
-        #     new_game.home_PS = game['bookmakers'][0]['markets'][1]['outcomes'][0]['point']
-        #     new_game.away_PS = game['bookmakers'][0]['markets'][1]['outcomes'][1]['point']
-        #     new_game.home_PS_price = game['bookmakers'][0]['markets'][1]['outcomes'][0]['price']
-        #     new_game.away_PS_price = game['bookmakers'][0]['markets'][1]['outcomes'][1]['price']
-            
-        #     if 'markets' in game['bookmakers'][0] and len(game['bookmakers'][0]['markets']) > 2:
-        #         new_game.over_under = game['bookmakers'][0]['markets'][2]['outcomes'][0]['point']
-        #     else:
-        #         new_game.over_under = 'OFF'
-
-        #     if 'markets' in game['bookmakers'][0] and len(game['bookmakers'][0]['markets']) > 2:
-        #         new_game.over_under_price = game['bookmakers'][0]['markets'][2]['outcomes'][0]['price']
-        #     else:
-        #         new_game.over_under_price = 0
-
-        #     # new_game.game_date = datetime.datetime.strptime(game['commence_time'], DATE_FORMAT)
-
-        #     db.session.add(new_game)
-        #     db.session.commit()
+        # if gateway == 1:
+        #     gateway = 0
+            # get_new_data()
 
         all_games = Game.query.all()
         # pdb.set_trace()
