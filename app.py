@@ -1,7 +1,7 @@
 import os
 import pdb
 import datetime
-from flask import Flask, jsonify, render_template, request, flash, redirect, session, g
+from flask import Flask, jsonify, json, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from flask_sqlalchemy import SQLAlchemy
@@ -90,6 +90,8 @@ def get_new_data():
 
         # new_game.game_date = datetime.datetime.strptime(game['commence_time'], DATE_FORMAT)
 
+
+
         db.session.add(new_game)
         db.session.commit()
     all_games = Game.query.all()
@@ -168,5 +170,14 @@ def see_action():
             # get_new_data()
 
         all_games = Game.query.all()
+        
         # pdb.set_trace()
         return render_template('action.html', all_games=all_games)
+
+@app.route('/parlay-preview', methods=['GET','POST'])
+def preview():
+    if request.method == 'POST':
+        # Get the JSON data from the ajax request
+        data = request.get_json()
+        print(data)
+    return render_template('preview.html', data=data)

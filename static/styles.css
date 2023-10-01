@@ -34,11 +34,10 @@ body {
 /* ################################################################################ */
 /* Betting Table CSS */
 
-
-
-
-
-
+.btn2 {
+  margin-left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 p {
   color:#102770;
@@ -48,7 +47,8 @@ p {
   font-size: medium;
   position: relative;
   top: 5%;
-  color:#c4c3ca
+  color:#c4c3ca;
+  z-index: 1;
 }
 
 .box-bottom {
@@ -69,9 +69,10 @@ p {
   width: 550px;
   height: 275px;
   background-color: #2a2b38;
-  box-shadow: 1px 2px 4px #1f2029;
   margin: .5em;
   border-radius: 15px;
+  display: inline-block;
+
 }
 
 .bet-box {
@@ -79,71 +80,81 @@ p {
   height: 4.25em;
   width: 5.25em;
   background-color: #1f2029;
-  border: .5px solid #ffeba7
+  border: .5px solid #ffeba7;
+  z-index: 2;
+  text-align: center;
 }
 
-.bet-box:hover {
+.game-box:hover {
+  border-color: green;
+}
+
+.checked{
   background-color: #102770;
 }
 
-.card-bets{
-  text-align: center;
+.checked:hover {
+  border-color: red;
 }
 
-.box-1 {
-  margin-top: 115%;
-  margin-bottom: -40%;
-}
-
-.box-2{
+.spread-box-top{
   position: absolute;
-  top: 160%;
-  margin-top: -20%;
-  
-}
-
-.spread {
-  text-align: center;
-  position: absolute;
+  top: 37%;
   left: 42%;
 }
 
-.money {
-  text-align: center;
+.spread-box-bottom{
   position: absolute;
+  top: 70%;
+  left: 42%;
+}
+
+.money-box-top{
+  position: absolute;
+  top: 37%;
   left: 60%;
 }
 
-.total {
-  text-align: center;
+.money-box-bottom{
   position: absolute;
+  top: 70%;
+  left: 60%;
+}
+
+.total-box-top{
+  position: absolute;
+  top: 37%;
+  left: 78%;
+}
+
+.total-box-bottom{
+  position: absolute;
+  top: 70%;
   left: 78%;
 }
 
 .spread-header{
   color: #c4c3ca;  
   position: absolute;
-  top: 35%;
-  left: 10px;
+  top: 20%;
+  left: 45%;
   font-size: small;
-  text-align: center;
 }
 
 .money-header{
   color: #c4c3ca;  
   position: absolute;
-  top: 35%;
+  top: 20%;
+  left: 61%;
   font-size: small;
-  text-align: center;
 }
 
 .total-header{
   color: #c4c3ca;  
   position: absolute;
-  top: 35%;
-  left: 18px;
+  top: 20%;
+  left: 82%;
   font-size: small;
-  text-align: center;
 }
 
 .fa-at{
@@ -187,9 +198,67 @@ h1 {
   right: 4px;
 }
 
+.bet-off:hover{
+  pointer-events: none;
+}
 
+/* ##################################################################################### */
+/* Parlay CSS */
 
+h4 {
+  text-align: center;
+}
 
+#closeOverlayBtn{
+  position: relative;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  z-index: 1000; /* Higher z-index to appear over other content */
+}
+
+.overlay-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 90vh;
+  width: 35vw;
+  transform: translate(-50%, -50%);
+  background-color: #1f2029;
+  color: #c4c3ca;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+
+.previewTeam {
+  color: #c4c3ca;
+}
+
+.over {
+  transform: translate(-8%, 0);
+  margin-bottom: 20px;
+}
+
+/* .point {
+  margin-left: 20%;
+} */
+
+.odds {
+  /* display: inline; */
+  color: #ffeba7;
+}
 
 
 /* ##################################################################################### */

@@ -2,76 +2,100 @@
 {% block title %}Betting Table{% endblock %}
 
 {% block content %}
-<h1 class="display-2 mt-0">Place Your Bets</h1>
 
 <div class="container">
+    <h1 class="display-2 mt-0">Place Your Bets</h1>
+
     <div class="row">
+        <form class="betting-table" action="">
 
-        {% for game in all_games %}
-        <div class="card bets" id="action">
-            <p class="tipoff-time mt-1">Datetime Here</p>
-            <span class="game-id">#{{ game.game_id }}</span>
-            <span class="away-team">{{game.away_team}}</span>
-            <i class="fa-solid fa-at"></i>
-            <span class="home-team">{{ game.home_team }}</span>
+            <button class="btn btn2 mb-2 mt-3">Bet</button>
+            <div>
+                {% for game in all_games %}
+                <div class="card bets" id="{{game.game_id}}">
+                    <p class="tipoff-time mt-1">Datetime Here</p>
+                    <span class="game-id">#{{ game.game_id }}</span>
+                    <span class="away-team">{{game.away_team}}</span>
+                    <i class="fa-solid fa-at"></i>
+                    <span class="home-team">{{ game.home_team }}</span>
 
-            <form class="spread" action="">
-                <p class="spread-header">Spread</p>
 
-                <div class="bet-box box-1">
-                    <p class="box-top">{{ game.away_PS }}</p>
-                    <p class="box-bottom">{{ game.away_PS_price }}</p>
-                </div>
-                <div class="bet-box box-2">
-                    <p class="box-top">{{ game.home_PS }}</p>
-                    <p class="box-bottom">{{ game.home_PS_price }}</p>
-                </div>
-            </form>
+                    <p class="spread-header">Spread</p>
 
-            <form class="money" action="">
-                <p class="money-header">Money Line</p>
-                <div class="bet-box box-1">
-                    {% if game.away_ml_price > 0 %}
-                    <p class="box-text">+{{ game.away_ml_price }}</p>
-                    {% else %}
-                    <p class="box-text">{{ game.away_ml_price }}</p>
-                    {% endif %}
-                </div>
-                <div class="bet-box box-2">
-                    {% if game.home_ml_price > 0 %}
-                    <p class="box-text">+{{ game.home_ml_price }}</p>
-                    {% else %}
-                    <p class="box-text">{{ game.home_ml_price }}</p>
-                    {% endif %}
-                </div>
-            </form>
+                    <div class="bet-box spread-box-top game-box"
+                        data-value=' { "game_id": "{{game.game_id}}", "cat": "spread", "choice": "{{game.away_team}}", "PS": {{game.away_PS}}, "price": {{game.away_PS_price}} }'>
+                        <p class="box-top">{{ game.away_PS }}</p>
+                        <p class="box-bottom">{{ game.away_PS_price }}</p>
+                    </div>
 
-            <form class="total" action="">
-                <p class="total-header">Total</p>
-                <div class="bet-box box-1">
-                    {% if game.over_under != 'OFF' %}
-                    <p class="box-top">U {{ game.over_under }}</p>
-                    <p class="box-bottom">{{ game.over_under_price }}</p>
-                    {% else %}
-                    <p class="box-text">OFF</p>
-                    {% endif %}
+                    <div class="bet-box spread-box-bottom game-box"
+                        data-value=' { "game_id": "{{game.game_id}}", "cat": "spread", "choice": "{{game.home_team}}", "PS": {{game.home_PS}}, "price": {{game.home_PS_price}} }'>
+
+                        <p class="box-top">{{ game.home_PS }}</p>
+                        <p class="box-bottom">{{ game.home_PS_price }}</p>
+                    </div>
+
+                    <p class="money-header">Money Line</p>
+
+                    <div class="bet-box money-box-top game-box"
+                        data-value=' { "game_id": "{{game.game_id}}", "cat": "ml", "choice": "{{game.away_team}}", "ml_price": {{game.away_ml_price }}, "away_ml_price": {{game.away_ml_price}} }'>
+
+                        {% if game.away_ml_price > 0 %}
+                        <p class="box-text">+{{ game.away_ml_price }}</p>
+                        {% else %}
+                        <p class="box-text">{{ game.away_ml_price }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="bet-box money-box-bottom game-box"
+                        data-value=' { "game_id": "{{game.game_id}}", "cat": "ml", "choice": "{{game.home_team}}", "ml_price": {{game.home_ml_price }}, "home_ml_price": {{game.home_ml_price}} }'>
+
+                        {% if game.home_ml_price > 0 %}
+                        <p class="box-text">+{{ game.home_ml_price }}</p>
+                        {% else %}
+                        <p class="box-text">{{ game.home_ml_price }}</p>
+                        {% endif %}
+                    </div>
+
+
+                    <p class="total-header">Total</p>
+                    <div class="bet-box total-box-top game-box"
+                        data-value=' { "game_id": "{{game.game_id}}", "cat": "total", "choice": "under", "team1": "{{game.away_team}}", "team2": "{{game.home_team}}", "over_under": "{{game.over_under}}", "over_under_price": {{game.over_under_price}} }'>
+
+                        {% if game.over_under != 'OFF' %}
+                        <p class="box-top">U {{ game.over_under }}</p>
+                        <p class="box-bottom">{{ game.over_under_price }}</p>
+                        {% else %}
+                        <p class="box-text">OFF</p>
+                        {% endif %}
+                    </div>
+                    <div class="bet-box total-box-bottom game-box"
+                        data-value=' { "game_id": "{{game.game_id}}", "cat": "total", "choice": "over", "team1": "{{game.away_team}}", "team2": "{{game.home_team}}", "over_under": "{{game.over_under}}", "over_under_price": {{game.over_under_price}} }'>
+
+                        {% if game.over_under != 'OFF' %}
+                        <p class="box-top">O {{ game.over_under }}</p>
+                        <p class="box-bottom">{{ game.over_under_price }}</p>
+                        {% else %}
+                        <p class="box-text bet-off">OFF</p>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="bet-box box-2">
-                    {% if game.over_under != 'OFF' %}
-                    <p class="box-top">O {{ game.over_under }}</p>
-                    <p class="box-bottom">{{ game.over_under_price }}</p>
-                    {% else %}
-                    <p class="box-text">OFF</p>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
-        {% endfor %}
+                {% endfor %}
+            </div>
+        </form>
     </div>
 </div>
+
+<div id="overlay" class="overlay">
+    <div class="overlay-content">
+        <h4 class="mb-5">{{g.user.username}}'s Parlay</h4>
+        <div class="previewParlay container">
+            
+            <div class="text-center eachPick">
+
+            </div>
+        </div>
+        <button class="btn" id="closeOverlayBtn">Close Overlay</button>
+    </div>
 </div>
-
-
-
 
 {% endblock %}
