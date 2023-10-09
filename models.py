@@ -41,10 +41,10 @@ class User(db.Model):
 
     balance = db.Column(
         db.Float,
-        default=1000.00,
+        default=100.00,
     )
 
-    bets = db.relationship('Ticket', backref='users')
+    # bets = db.relationship('Ticket', backref='users')
 
     @classmethod
     def signup(cls, username, email, password):
@@ -96,6 +96,15 @@ class Game(db.Model):
     )
 
     game_id = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    start_time = db.Column(
+        db.Text,
+    )
+
+    day = db.Column(
         db.Text,
         nullable=False,
     )
@@ -152,7 +161,16 @@ class Game(db.Model):
     #     db.Text
     # )
 
-    game_bet = db.relationship('Ticket', backref='games')
+
+class Counter(db.Model):
+    """counter for bet_id"""
+    __tablename__ = 'counters'
+
+    id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.Integer, default=1)
+    total_users = db.Column(db.Integer, default=1)
+    total_bets = db.Column(db.Integer, default=0)
+
 
 class Ticket(db.Model):
     """Parlay ticket table"""
@@ -166,50 +184,43 @@ class Ticket(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id'),
+        # db.ForeignKey('users.id'),
         nullable=False,
     )
 
-    odds = db.Column(
+    game_id = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    bet_id = db.Column(
         db.Integer,
+    )
+
+    pick = db.Column(
+        db.Text,
+        nullable = False,
+    )
+
+    points = db.Column(
+        db.Text,
+        nullable = False,
+    )
+
+    odds = db.Column(
+        db.Text,
         nullable=False,
     )
 
     amount_bet = db.Column(
         db.Float, 
-        nullable=False
-    )
-
-    game_id = db.Column(
-    db.Integer, 
-    db.ForeignKey('games.id'),
-    nullable=False,
-    )
-
-    ticket_user = db.relationship('User', backref='tickets')
-
-
-class Sportsbook(db.Model):
-    """Keep track of placed bets (Relationship Table)"""
-
-    __tablename__ = "sportsbook"
-
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
-
-    user_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('users.id'),
         nullable=False,
     )
 
-    game_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('tickets.id'), 
+    to_win = db.Column(
+        db.Float,
         nullable=False,
     )
 
-    # sportsbook_user = db.relationship('User', backref='user_tickets')
-    # sportsbook_game = db.relationship('Game', backref='game_tickets')
+    # ticket_user = db.relationship('User', backref='tickets')
+

@@ -42,8 +42,8 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="/action">Action</a>
             <div class="dropdown-divider"></div>
-            <p class="dropdown-item">{{g.user.username}}</p>
-            <p class="dropdown-item">Balance: $ {{g.user.balance}}</p>
+            <a href="/parlays/{{g.user.username}}"><p class="dropdown-item">{{g.user.username}} bets</p></a>
+            <p class="dropdown-item" id="balanceReset">Balance: $ {{g.user.balance}}</p>
             
           </div>
         </li>
@@ -57,7 +57,15 @@
     </div>
   </nav>
 
-
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <section class="messages">
+      {% for category, msg in messages %}
+      <p class="{{category}}" role="alert">{{msg}}</p>
+      {% endfor %}
+  </section>
+  {% endif %}
+  {% endwith %}
 
   {% block content %}
   {% endblock %}

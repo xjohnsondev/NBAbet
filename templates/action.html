@@ -4,16 +4,21 @@
 {% block content %}
 
 <div class="container">
+
     <h1 class="display-2 mt-0">Place Your Bets</h1>
 
     <div class="row">
         <form class="betting-table" action="">
 
-            <button class="btn btn2 mb-2 mt-3">Bet</button>
-            <div>
+            <button class="btn show-overlay mb-2 mt-3">Bet</button>
+            {% if not all_games %}
+            <h5 class="no-games">No Games Scheduled Today</h5>
+            {% else %}
+            <div class="table">
+                
                 {% for game in all_games %}
                 <div class="card bets" id="{{game.game_id}}">
-                    <p class="tipoff-time mt-1">Datetime Here</p>
+                    <p class="tipoff-time mt-1">{{game.start_time}} PST</p>
                     <span class="game-id">#{{ game.game_id }}</span>
                     <span class="away-team">{{game.away_team}}</span>
                     <i class="fa-solid fa-at"></i>
@@ -23,13 +28,13 @@
                     <p class="spread-header">Spread</p>
 
                     <div class="bet-box spread-box-top game-box"
-                        data-value=' { "game_id": "{{game.game_id}}", "cat": "spread", "choice": "{{game.away_team}}", "PS": {{game.away_PS}}, "price": {{game.away_PS_price}} }'>
+                        data-value=' { "user":{{g.user.id}}, "game_id": "{{game.game_id}}", "cat": "spread", "choice": "{{game.away_team}}", "PS": {{game.away_PS}}, "price": {{game.away_PS_price}} }'>
                         <p class="box-top">{{ game.away_PS }}</p>
                         <p class="box-bottom">{{ game.away_PS_price }}</p>
                     </div>
 
                     <div class="bet-box spread-box-bottom game-box"
-                        data-value=' { "game_id": "{{game.game_id}}", "cat": "spread", "choice": "{{game.home_team}}", "PS": {{game.home_PS}}, "price": {{game.home_PS_price}} }'>
+                        data-value=' { "user":{{g.user.id}}, "game_id": "{{game.game_id}}", "cat": "spread", "choice": "{{game.home_team}}", "PS": {{game.home_PS}}, "price": {{game.home_PS_price}} }'>
 
                         <p class="box-top">{{ game.home_PS }}</p>
                         <p class="box-bottom">{{ game.home_PS_price }}</p>
@@ -38,7 +43,7 @@
                     <p class="money-header">Money Line</p>
 
                     <div class="bet-box money-box-top game-box"
-                        data-value=' { "game_id": "{{game.game_id}}", "cat": "ml", "choice": "{{game.away_team}}", "ml_price": {{game.away_ml_price }}, "away_ml_price": {{game.away_ml_price}} }'>
+                        data-value=' { "user":{{g.user.id}}, "game_id": "{{game.game_id}}", "cat": "ml", "choice": "{{game.away_team}}", "ml_price": {{game.away_ml_price }}, "away_ml_price": {{game.away_ml_price}} }'>
 
                         {% if game.away_ml_price > 0 %}
                         <p class="box-text">+{{ game.away_ml_price }}</p>
@@ -47,7 +52,7 @@
                         {% endif %}
                     </div>
                     <div class="bet-box money-box-bottom game-box"
-                        data-value=' { "game_id": "{{game.game_id}}", "cat": "ml", "choice": "{{game.home_team}}", "ml_price": {{game.home_ml_price }}, "home_ml_price": {{game.home_ml_price}} }'>
+                        data-value=' { "user":{{g.user.id}}, "game_id": "{{game.game_id}}", "cat": "ml", "choice": "{{game.home_team}}", "ml_price": {{game.home_ml_price }}, "home_ml_price": {{game.home_ml_price}} }'>
 
                         {% if game.home_ml_price > 0 %}
                         <p class="box-text">+{{ game.home_ml_price }}</p>
@@ -59,43 +64,60 @@
 
                     <p class="total-header">Total</p>
                     <div class="bet-box total-box-top game-box"
-                        data-value=' { "game_id": "{{game.game_id}}", "cat": "total", "choice": "under", "team1": "{{game.away_team}}", "team2": "{{game.home_team}}", "over_under": "{{game.over_under}}", "over_under_price": {{game.over_under_price}} }'>
+                        data-value=' { "user":{{g.user.id}}, "game_id": "{{game.game_id}}", "cat": "total", "choice": "under", "team1": "{{game.away_team}}", "team2": "{{game.home_team}}", "over_under": "{{game.over_under}}", "over_under_price": {{game.over_under_price}} }'>
 
                         {% if game.over_under != 'OFF' %}
                         <p class="box-top">U {{ game.over_under }}</p>
                         <p class="box-bottom">{{ game.over_under_price }}</p>
                         {% else %}
-                        <p class="box-text">OFF</p>
+                        <p class="no-odds box-text " id="no-odds">OFF</p>
                         {% endif %}
                     </div>
                     <div class="bet-box total-box-bottom game-box"
-                        data-value=' { "game_id": "{{game.game_id}}", "cat": "total", "choice": "over", "team1": "{{game.away_team}}", "team2": "{{game.home_team}}", "over_under": "{{game.over_under}}", "over_under_price": {{game.over_under_price}} }'>
+                        data-value=' { "user":{{g.user.id}}, "game_id": "{{game.game_id}}", "cat": "total", "choice": "over", "team1": "{{game.away_team}}", "team2": "{{game.home_team}}", "over_under": "{{game.over_under}}", "over_under_price": {{game.over_under_price}} }'>
 
                         {% if game.over_under != 'OFF' %}
                         <p class="box-top">O {{ game.over_under }}</p>
                         <p class="box-bottom">{{ game.over_under_price }}</p>
                         {% else %}
-                        <p class="box-text bet-off">OFF</p>
+                        <p class="no-odds box-text">OFF</p>
                         {% endif %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            {% endif %}
         </form>
     </div>
 </div>
 
 <div id="overlay" class="overlay">
-    <div class="overlay-content">
-        <h4 class="mb-5">{{g.user.username}}'s Parlay</h4>
-        <div class="previewParlay container">
-            
-            <div class="text-center eachPick">
+    <form action="/submit-parlay" method="POST">
+        <div class="overlay-content">
+            <h4 class="mb-5">{{g.user.username}}'s Parlay</h4>
+            <div class="previewParlay container">
+                <div class="text-center eachPick">
+
+                </div>
+            </div>
+
+            <div class="calculator">
+                <div>
+                    <div class="toWin">
+                    <input class="calc" type="number" placeholder="Max: $100" min="1" max="100">
+                    <label class="winAmount ml-2"></label>
+                </div>
+                    <div class="previewBtns">
+                        <button type="button" class="btn sub" id="closeOverlayBtn">Cancel</button>
+                        <button type="submit" class="btn sub" id="submitParlayBtn">Submit Bet</button>
+                    </div>
+                </div>
 
             </div>
+
         </div>
-        <button class="btn" id="closeOverlayBtn">Close Overlay</button>
-    </div>
+    </form>
+
 </div>
 
 {% endblock %}

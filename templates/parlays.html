@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Parlays{% endblock %}
+
+{% block content %}
+<h1 class="display-4 mb-5">{{g.user.username}}'s Parlay's</h1>
+<div class="container">
+    {% for ticket in bet_list %}
+    <form action="/parlays/details/{{ticket[0]}}">
+        <button class="parlay-list">
+            <span class="parlay-left">Confirmation #{{ticket[0]}}</span>
+            <span class="parlay-right">To Win: {{ticket[2]}}</span>
+        </button>
+    </form>
+    {% endfor %}
+</div>
+{% endblock %}

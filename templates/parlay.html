@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Parlay{% endblock %}
+
+{% block content %}
+<h1 class="display-4 mb-1">Your ticket. Good Luck! </h1>
+<div class="container parlay-cont">
+    <div class="parlay-ticket">
+        <div class="parlay-item">
+            {% for bet in bets %}
+            <h3 class="item-left">{{bet.pick}}</h3>
+            <h3 class="item-right">{{bet.odds}}</h3>
+            <br>
+            {% endfor %}
+        </div>
+        <div class="parlay-calcs">
+            <span class="amount-calc">Amount Bet: ${{bets[0].amount_bet}}</span>
+            <span class="win-calc">To Win: ${{bets[0].to_win}}</span>
+        </div>        
+    </div>
+</div>
+{% endblock %}
