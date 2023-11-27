@@ -1,9 +1,8 @@
 import os
 import pdb
 from datetime import datetime, timedelta
-import pytz
 from flask import Flask, jsonify, json, render_template, request, flash, redirect, session, g
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
@@ -26,7 +25,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "keyz")
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 app.app_context().push()
 connect_db(app)
@@ -34,7 +33,7 @@ db.create_all()
 
 CURR_USER = "curr_user"
 API_BASE_URL = "https://api.the-odds-api.com"
-KEY = "7928e461c07e63ecb89b830c13c88065"
+KEY = "9ef8ccf666c1964f575615b8fbedf341"
 
 @app.before_request
 def add_user_to_g():
@@ -56,7 +55,6 @@ def do_login(user):
 
 def do_logout():
     """Logout user"""
-
     if CURR_USER in session:
         del session[CURR_USER]
 
@@ -68,7 +66,7 @@ def get_new_data():
                                    'oddsFormat': 'american',
                                    'bookmakers': 'draftkings'})
     data = res.json()
-    # pdb.set_trace()
+    
     for game in data:
         new_game = Game()
         new_game.game_id = game['id']
@@ -105,7 +103,9 @@ def get_new_data():
         # Offset time to PST
         pst_datetime = iso_datetime-timedelta(hours=7)
         formatted_time = pst_datetime.strftime("%b %d, %Y @ %I:%M %p")
+        
         new_game.start_time = formatted_time
+        new_game.day = pst_datetime.strftime("%b %d")
 
         db.session.add(new_game)
         db.session.commit()
@@ -167,14 +167,9 @@ def logout():
 @app.route('/')
 def home_page():
     """Go to homepage"""
-    # pdb.set_trace()
     
     current_time = datetime.now().strftime("%b %d, %Y @ %I:%M %p")   
     print(current_time)
-
-    # games = Game.query.filter_by(day = session['today']).all()
-    # print(games[0].id)
-
     return render_template('home.html')
 
 @app.route('/reset-balance', methods=["POST"])
@@ -190,7 +185,6 @@ def reset_balance():
 ##############################################################################
 # Betting routes
 
-
 @app.route('/action')
 def see_action():
     """See bet table"""
@@ -202,12 +196,12 @@ def see_action():
         # get_new_data()
 
         """Table resets at midnight PST daily"""
-        # current_day = datetime.now().strftime("%b %d")  
-        current_day = ("Oct 24")
+        current_day = datetime.now().strftime("%b %d")  
         print(current_day)
-        all_games = Game.query.filter_by(day = current_day).all()
+        print(session['today'])
+        today_games = Game.query.filter_by(day = session['today'])
         
-        return render_template('action.html', all_games=all_games, g=g)
+        return render_template('action.html', today_games=today_games, g=g)
 
 @app.route('/parlay-preview', methods=['GET','POST'])
 def preview():
@@ -220,7 +214,6 @@ def preview():
 @app.route('/submit-parlay', methods=['POST', 'GET'])
 def submit_parlay():
     """Submit selected parlay ticket"""
-    print('############################################################')
     if request.method == 'POST':
         data=request.get_json()
         print(data)
@@ -242,12 +235,9 @@ def submit_parlay():
             new_ticket.amount_bet = float(data["betAmount"])
             new_ticket.to_win = float(data["toWin"])
             
-            # print(type(game['parlayChoice2']))
-
             db.session.add(new_ticket)
             db.session.commit()
 
-        
         counter.value += 1
         counter.total_bets += 1
         user = User.query.get(g.user.id)
@@ -268,7 +258,6 @@ def show_parlays(user):
     bet_list = [[parlay.bet_id, parlay.amount_bet, parlay.to_win] for parlay in user_parlays]
     bet_set = set(map(tuple, bet_list))
 
-    # pdb.set_trace()
     return render_template('parlays.html', user_parlays=user_parlays, bet_list=bet_set)
 
 @app.route('/parlays/details/<int:bet_id>')
@@ -277,5 +266,4 @@ def show_parlay(bet_id):
 
     bets = Ticket.query.filter_by(bet_id=bet_id).all()
     print(bets)
-    # pdb.set_trace()
     return render_template('parlay.html', bets=bets)

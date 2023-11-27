@@ -11,12 +11,12 @@
         <form class="betting-table" action="">
 
             <button class="btn show-overlay mb-2 mt-3">Bet</button>
-            {% if not all_games %}
+            {% if not today_games %}
             <h5 class="no-games">No Games Scheduled Today</h5>
             {% else %}
             <div class="table">
                 
-                {% for game in all_games %}
+                {% for game in today_games %}
                 <div class="card bets" id="{{game.game_id}}">
                     <p class="tipoff-time mt-1">{{game.start_time}} PST</p>
                     <span class="game-id">#{{ game.game_id }}</span>
