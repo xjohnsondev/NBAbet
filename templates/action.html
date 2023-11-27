@@ -14,7 +14,7 @@
             {% if not today_games %}
             <h5 class="no-games">No Games Scheduled Today</h5>
             {% else %}
-            <div class="table">
+            <div class="table col-sm-12">
                 
                 {% for game in today_games %}
                 <div class="card bets" id="{{game.game_id}}">

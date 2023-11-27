@@ -153,13 +153,40 @@ class Game(db.Model):
         default = 0,
     )
 
-    # game_date = db.Column(
-    #     db.Text,
-    # )
+class Result(db.Model):
+    """Game Results"""
 
-    # tipoff = db.Column(
-    #     db.Text
-    # )
+    __tablename__ = 'results'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    game_id = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    day = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    home_team = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    away_team = db.Column(
+        db.Text,
+        nullable=False,
+    )
+
+    completed = db.Column(
+        db.Text,
+        nullable=False,
+    )
 
 
 class Counter(db.Model):

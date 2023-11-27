@@ -195,10 +195,7 @@ def see_action():
     else:
         # get_new_data()
 
-        """Table resets at midnight PST daily"""
-        current_day = datetime.now().strftime("%b %d")  
-        print(current_day)
-        print(session['today'])
+        # current_day = datetime.now().strftime("%b %d")  
         today_games = Game.query.filter_by(day = session['today'])
         
         return render_template('action.html', today_games=today_games, g=g)
@@ -208,7 +205,6 @@ def preview():
     if request.method == 'POST':
         # Get the JSON data from the ajax request
         data = request.get_json()
-        print(data)
     return render_template('preview.html', data=data)
 
 @app.route('/submit-parlay', methods=['POST', 'GET'])
@@ -216,7 +212,6 @@ def submit_parlay():
     """Submit selected parlay ticket"""
     if request.method == 'POST':
         data=request.get_json()
-        print(data)
         if not Counter.query.get(1):
             counter = Counter()
             db.session.add(counter)
@@ -265,5 +260,4 @@ def show_parlay(bet_id):
     """Show details of selected parlay"""
 
     bets = Ticket.query.filter_by(bet_id=bet_id).all()
-    print(bets)
     return render_template('parlay.html', bets=bets)
