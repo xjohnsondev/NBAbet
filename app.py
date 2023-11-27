@@ -193,7 +193,7 @@ def see_action():
         flash("You must login to access this feature", 'danger')
         return redirect('/')
     else:
-        # get_new_data()
+        get_new_data()
 
         # current_day = datetime.now().strftime("%b %d")  
         today_games = Game.query.filter_by(day = session['today'])
