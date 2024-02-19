@@ -11,7 +11,6 @@ gunicorn
 iniconfig
 itsdangerous
 Jinja2
-MarkupSafe
 packagin
 pluggy
 psycopg2-binary
