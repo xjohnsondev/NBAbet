@@ -19,8 +19,8 @@ if __name__ == "__main__":
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgresql:///nbabet'))
-
+    os.environ.get('DATABASE_URL', 'postgres://nbabet_user:58youIJyVMDSgjMAN3S1F6bGuKM7Dctj@dpg-cna4q15jm4es73c6qbs0-a.oregon-postgres.render.com/nbabet'))
+# postgresql:///nbabet
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
