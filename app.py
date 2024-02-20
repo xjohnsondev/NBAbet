@@ -19,7 +19,8 @@ if __name__ == "__main__":
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgres://nbabet_user:58youIJyVMDSgjMAN3S1F6bGuKM7Dctj@dpg-cna4q15jm4es73c6qbs0-a.oregon-postgres.render.com/nbabet'))
+    os.environ.get('DATABASE_URL'))
+# postgres://nbabet_user:58youIJyVMDSgjMAN3S1F6bGuKM7Dctj@dpg-cna4q15jm4es73c6qbs0-a.oregon-postgres.render.com/nbabet
 # postgresql:///nbabet
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -27,14 +28,9 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "keyz")
 # toolbar = DebugToolbarExtension(app)
 
-def connect_db(app):
-     with app.app_context():
-         db.app = app
-         db.init_app(app)
-         db.create_all()
-# app.app_context().push()
-# connect_db(app)
-# db.create_all()
+app.app_context().push()
+connect_db(app)
+db.create_all()
 
 CURR_USER = "curr_user"
 API_BASE_URL = "https://api.the-odds-api.com"
@@ -198,7 +194,7 @@ def see_action():
         flash("You must login to access this feature", 'danger')
         return redirect('/')
     else:
-        get_new_data()
+        # get_new_data()
 
         # current_day = datetime.now().strftime("%b %d")  
         today_games = Game.query.filter_by(day = session['today'])
