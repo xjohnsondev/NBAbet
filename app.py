@@ -27,9 +27,14 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "keyz")
 # toolbar = DebugToolbarExtension(app)
 
-app.app_context().push()
-connect_db(app)
-db.create_all()
+def connect_db(app):
+     with app.app_context():
+         db.app = app
+         db.init_app(app)
+         db.create_all()
+# app.app_context().push()
+# connect_db(app)
+# db.create_all()
 
 CURR_USER = "curr_user"
 API_BASE_URL = "https://api.the-odds-api.com"
@@ -193,7 +198,7 @@ def see_action():
         flash("You must login to access this feature", 'danger')
         return redirect('/')
     else:
-        # get_new_data()
+        get_new_data()
 
         # current_day = datetime.now().strftime("%b %d")  
         today_games = Game.query.filter_by(day = session['today'])
