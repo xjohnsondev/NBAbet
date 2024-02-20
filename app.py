@@ -28,9 +28,14 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "keyz")
 # toolbar = DebugToolbarExtension(app)
 
-app.app_context().push()
+# app.app_context().push()
+def connect_db(app):
+    with app.app_context():
+        db.app = app
+        db.init_app(app)
+        db.create_all()
 connect_db(app)
-db.create_all()
+# db.create_all()
 
 CURR_USER = "curr_user"
 API_BASE_URL = "https://api.the-odds-api.com"
