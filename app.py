@@ -13,14 +13,14 @@ from models import db, connect_db, User, Game, Ticket, Counter
 from forms import LoginForm, RegisterForm
 
 app = Flask(__name__)
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgresql:///nbabet'))
-# postgres://nbabet_user:58youIJyVMDSgjMAN3S1F6bGuKM7Dctj@dpg-cna4q15jm4es73c6qbs0-a.oregon-postgres.render.com/nbabet
+    os.environ.get('DATABASE_URL', 'postgres://nbabet_user:58youIJyVMDSgjMAN3S1F6bGuKM7Dctj@dpg-cna4q15jm4es73c6qbs0-a.oregon-postgres.render.com/nbabet'))
+# postgresql:///nbabet
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
